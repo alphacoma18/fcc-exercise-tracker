@@ -40,6 +40,7 @@ async function findAndUpdate(
 			_id,
 		},
 		{
+			$inc: { count: 1 },
 			$push: { log: { description, duration, date } },
 		},
 		{ safe: true, upsert: true, new: true }
@@ -65,6 +66,32 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
 		description: data.log[0].description,
 	});
 });
+
+/**
+ *
+ */
+app.get("/api/users/:_id/logs", async (req, res) => {
+	const { _id } = req.params;
+	const logs = await DB.findById({ _id });
+
+	console.log({
+		_id: logs._id,
+		username: logs.username,
+		count: logs.count,
+		log: logs.log,
+	});
+	
+	return res.json({
+		_id: logs._id,
+		username: logs.username,
+		count: logs.count,
+		log: logs.log,
+	});
+});
+
+/**
+ *
+ */
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
